@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+/* @import 'tailwindcss';
 
 :root {
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -50,4 +50,191 @@ body {
 
 #root {
   min-height: 100vh;
+} */
+
+
+@import 'tailwindcss';
+
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  line-height: 1.5;
+  font-weight: 400;
+
+  --app-bg: #f8fafc;
+  --surface: #ffffff;
+  --surface-muted: #f8fafc;
+
+  --sidebar-bg: #020617;
+  --sidebar-text: #e2e8f0;
+
+  --text: #0f172a;
+  --text-muted: #64748b;
+
+  --border: #e2e8f0;
+
+  color: var(--text);
+  background-color: var(--app-bg);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:root[data-theme='dark'] {
+  --app-bg: #020617;
+  --surface: #111827;
+  --surface-muted: #0f172a;
+
+  --sidebar-bg: #020617;
+  --sidebar-text: #e2e8f0;
+
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+
+  --border: #334155;
+
+  color: var(--text);
+  background-color: var(--app-bg);
+}
+
+html {
+  color-scheme: light;
+}
+
+html[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+
+  background-color: var(--app-bg);
+  color: var(--text);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* =========================================
+   DARK MODE - TAILWIND COLOR FIX
+========================================= */
+
+html[data-theme='dark'] .bg-white {
+  background-color: var(--surface) !important;
+}
+
+html[data-theme='dark'] .bg-slate-50 {
+  background-color: var(--surface-muted) !important;
+}
+
+html[data-theme='dark'] .bg-slate-50\/80 {
+  background-color: var(--surface-muted) !important;
+}
+
+html[data-theme='dark'] .bg-slate-100 {
+  background-color: #1e293b !important;
+}
+
+/* Text */
+
+html[data-theme='dark'] .text-slate-900 {
+  color: #f8fafc !important;
+}
+
+html[data-theme='dark'] .text-slate-800 {
+  color: #f1f5f9 !important;
+}
+
+html[data-theme='dark'] .text-slate-700 {
+  color: #e2e8f0 !important;
+}
+
+html[data-theme='dark'] .text-slate-600 {
+  color: #cbd5e1 !important;
+}
+
+html[data-theme='dark'] .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+html[data-theme='dark'] .text-slate-400 {
+  color: #94a3b8 !important;
+}
+
+/* Borders */
+
+html[data-theme='dark'] .border-slate-100 {
+  border-color: #1e293b !important;
+}
+
+html[data-theme='dark'] .border-slate-200 {
+  border-color: var(--border) !important;
+}
+
+/* Inputs */
+
+html[data-theme='dark'] input,
+html[data-theme='dark'] select,
+html[data-theme='dark'] textarea {
+  color: #f8fafc;
+}
+
+html[data-theme='dark'] input::placeholder,
+html[data-theme='dark'] textarea::placeholder {
+  color: #64748b;
+}
+
+/* Select dropdown */
+
+html[data-theme='dark'] select option {
+  background-color: #111827;
+  color: #f8fafc;
+}
+
+/* Tables */
+
+html[data-theme='dark'] table {
+  color: #e2e8f0;
+}
+
+html[data-theme='dark'] tbody td {
+  color: #e2e8f0;
+}
+
+/* Status badges */
+
+html[data-theme='dark'] .bg-emerald-50 {
+  background-color: rgba(16, 185, 129, 0.15) !important;
+}
+
+html[data-theme='dark'] .text-emerald-700 {
+  color: #6ee7b7 !important;
+}
+
+/* Buttons */
+
+html[data-theme='dark'] button {
+  color: inherit;
+}
+
+html[data-theme='dark'] .bg-emerald-500 {
+  color: #020617 !important;
+}
+
+html[data-theme='dark'] .bg-sky-500,
+html[data-theme='dark'] .bg-rose-500 {
+  color: #ffffff !important;
+}
+
+/* Date input calendar icon */
+
+html[data-theme='dark'] input[type='date']::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
 }
