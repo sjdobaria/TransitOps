@@ -13,7 +13,7 @@
 
 **Precision fleet dispatch, automated cost ledger synchronization, and real-time MongoDB transport operations command center.**
 
-[Features](#-key-features) • [Tech Stack](#-tech-stack) • [Setup Instructions](#-setup-instructions) • [Running the Project](#-how-to-run-the-backend--frontend) • [Team](#-team-members)
+[Features](#features) • [Tech Stack](#tech-stack) • [Setup Instructions](#setup-instructions) • [Running the Project](#running-the-project) • [Team](#team-members)
 
 </div>
 ---
@@ -26,6 +26,7 @@ Whether managing dozens of urban delivery vans or hundreds of interstate freight
 
 ---
 
+<a id="features"></a>
 ## ⚡ Key Features
 
 ### 🔐 1. Role-Based Access Control (RBAC) & Enterprise Workspaces
@@ -61,6 +62,7 @@ TransitOps tailors the interface, navigation, and operational metrics based on t
 
 ---
 
+<a id="tech-stack"></a>
 ## 🛠️ Tech Stack
 
 ### **Frontend Architecture**
@@ -84,6 +86,7 @@ TransitOps tailors the interface, navigation, and operational metrics based on t
 
 ---
 
+<a id="setup-instructions"></a>
 ## ⚙️ Setup Instructions
 
 ### Prerequisites
@@ -107,6 +110,7 @@ MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/transitops_
 
 ---
 
+<a id="running-the-project"></a>
 ## 🚀 How to Run the Backend & Frontend
 
 To run the full-stack application locally, open **two terminal windows** (or split your IDE terminal).
@@ -167,6 +171,7 @@ To run the full-stack application locally, open **two terminal windows** (or spl
 
 ---
 
+<a id="team-members"></a>
 ## 👥 Team Members
 
 | Name | Role / Responsibility | GitHub |
