@@ -1,4 +1,4 @@
-# TransitOps — Enterprise Fleet & Dispatch Command Center
+# TransitOps — Smart Transport Operations Platform
 
 <div align="center">
 
@@ -176,8 +176,8 @@ To run the full-stack application locally, open **two terminal windows** (or spl
 
 | Name | Role / Responsibility | GitHub |
 | :--- | :--- | :--- |
-| **Team Lead / Full-Stack Engineer** | Project Architecture, Django REST API, MongoDB Integration, UI/UX Design | [@sjdobaria](https://github.com/sjdobaria) |
-| **Frontend Developer** | React Components, Recharts Analytics, Tailwind Glassmorphism Styling | [@TirthPanchal123](https://github.com/TirthPanchal123) |
+| **Team Lead / Full-Stack Developer** | Project Architecture, Django REST API, MongoDB Integration| [@sjdobaria](https://github.com/sjdobaria) |
+| **Frontend Developer** | React Components, Recharts Analytics, Tailwind Glassmorphism Styling, UI/UX Design  | [@TirthPanchal123](https://github.com/TirthPanchal123) |
 
 ---
 
