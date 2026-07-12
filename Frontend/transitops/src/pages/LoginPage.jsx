@@ -33,14 +33,14 @@ const LoginPage = () => {
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(16,185,129,0.16),_transparent_35%),linear-gradient(135deg,#07111f_0%,#0f172a_55%,#111827_100%)] px-4 py-10 text-slate-100 sm:px-6 lg:px-8">
-      <div className="mx-auto flex max-w-6xl flex-col gap-8 rounded-[32px] border border-slate-800 bg-slate-950/70 p-4 shadow-2xl shadow-slate-950/40 lg:flex-row lg:p-8">
-        <div className="flex-1 rounded-[28px] border border-slate-800 bg-slate-900/70 p-8 lg:p-12">
+      <div className="mx-auto flex max-w-md items-center justify-center rounded-[32px] border border-slate-800 bg-slate-950/70 p-6 shadow-2xl shadow-slate-950/40 sm:p-8">
+        <div className="w-full rounded-[28px] border border-slate-800 bg-slate-900/70 p-8">
           <Link to="/" className="inline-flex items-center gap-2 text-sm text-slate-400 transition hover:text-emerald-300">
             <ArrowLeft size={16} /> Back to home
           </Link>
-          <h1 className="mt-8 text-4xl font-semibold text-white">Welcome back to TransitOps.</h1>
-          <p className="mt-3 max-w-md text-base leading-7 text-slate-400">
-            Access fleet control, dispatch visibility, and compliance insights for your transport operations.
+          <h1 className="mt-8 text-3xl font-semibold text-white">Welcome back</h1>
+          <p className="mt-3 text-base leading-7 text-slate-400">
+            Sign in to continue to your TransitOps workspace.
           </p>
 
           <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
@@ -53,7 +53,7 @@ const LoginPage = () => {
                   value={form.email}
                   onChange={(event) => setForm({ ...form, email: event.target.value })}
                   className="w-full bg-transparent outline-none"
-                  placeholder="admin@transitops.com"
+                  placeholder="you@company.com"
                   required
                 />
               </div>
@@ -91,18 +91,6 @@ const LoginPage = () => {
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
-        </div>
-
-        <div className="flex-1 rounded-[28px] border border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 to-slate-900/80 p-8 lg:p-12">
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-emerald-400">Demo access</p>
-          <h2 className="mt-4 text-3xl font-semibold text-white">Fleet Manager workspace</h2>
-          <p className="mt-4 text-base leading-8 text-slate-400">
-            Use the mock demo credentials to preview the protected dashboard and role-aware navigation experience.
-          </p>
-          <div className="mt-8 rounded-2xl border border-slate-800 bg-slate-950/70 p-4 text-sm text-slate-300">
-            <p><span className="text-slate-500">Email:</span> admin@transitops.com</p>
-            <p className="mt-2"><span className="text-slate-500">Password:</span> admin123</p>
-          </div>
         </div>
       </div>
     </div>
