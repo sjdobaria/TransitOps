@@ -45,6 +45,8 @@ class Expense(models.Model):
         ('fine', 'Fine'),
         ('repair', 'Repair'),
         ('cleaning', 'Cleaning'),
+        ('maintenance', 'Maintenance'),
+        ('miscellaneous', 'Miscellaneous'),
         ('other', 'Other'),
     ]
 

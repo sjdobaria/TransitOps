@@ -400,6 +400,13 @@ const ExpensesPage = () => {
                   <option>Toll</option>
                   <option>Maintenance</option>
                   <option>Miscellaneous</option>
+                  <option>Insurance</option>
+                  <option>Parking</option>
+                  <option>Repair</option>
+                  <option>Cleaning</option>
+                  <option>Fine</option>
+                  <option>Registration</option>
+                  <option>Other</option>
                 </select>
               </label>
 

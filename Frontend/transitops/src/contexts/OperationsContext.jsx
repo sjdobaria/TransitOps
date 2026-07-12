@@ -39,27 +39,27 @@ export const OperationsProvider = ({ children }) => {
 
       if (vRes?.data) {
         const list = Array.isArray(vRes.data) ? vRes.data : vRes.data.results || []
-        if (list.length > 0) setVehicles(list.map(fromBackendVehicle).filter(Boolean))
+        setVehicles(list.map(fromBackendVehicle).filter(Boolean))
       }
       if (dRes?.data) {
         const list = Array.isArray(dRes.data) ? dRes.data : dRes.data.results || []
-        if (list.length > 0) setDrivers(list.map(fromBackendDriver).filter(Boolean))
+        setDrivers(list.map(fromBackendDriver).filter(Boolean))
       }
       if (tRes?.data) {
         const list = Array.isArray(tRes.data) ? tRes.data : tRes.data.results || []
-        if (list.length > 0) setTrips(list.map(fromBackendTrip).filter(Boolean))
+        setTrips(list.map(fromBackendTrip).filter(Boolean))
       }
       if (mRes?.data) {
         const list = Array.isArray(mRes.data) ? mRes.data : mRes.data.results || []
-        if (list.length > 0) setMaintenance(list.map(fromBackendMaintenance).filter(Boolean))
+        setMaintenance(list.map(fromBackendMaintenance).filter(Boolean))
       }
       if (fRes?.data) {
         const list = Array.isArray(fRes.data) ? fRes.data : fRes.data.results || []
-        if (list.length > 0) setFuelLogs(list.map(fromBackendFuelLog).filter(Boolean))
+        setFuelLogs(list.map(fromBackendFuelLog).filter(Boolean))
       }
       if (eRes?.data) {
         const list = Array.isArray(eRes.data) ? eRes.data : eRes.data.results || []
-        if (list.length > 0) setExpenses(list.map(fromBackendExpense).filter(Boolean))
+        setExpenses(list.map(fromBackendExpense).filter(Boolean))
       }
     } catch {
       // ignore network errors if backend is offline

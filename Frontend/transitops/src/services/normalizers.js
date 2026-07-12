@@ -54,12 +54,17 @@ export const fromBackendTrip = (t) => {
   const source = t.source || ''
   const dest = t.destination || ''
   const route = source && dest ? `${source} → ${dest}` : t.route || 'Local Route'
+  const vehicleRef = t.vehicle_reg || t.vehicle_name || (t.vehicle ? (typeof t.vehicle === 'object' ? (t.vehicle.registration_number || t.vehicle.id) : t.vehicle) : t.vehicle_id || 'Unassigned')
+  const driverRef = t.driver_name || (t.driver ? (typeof t.driver === 'object' ? (t.driver.full_name || t.driver.id) : t.driver) : t.driver_id || 'Unassigned')
   return {
     id: t.id,
     trip_id: t.trip_number || t.trip_id || `TRP-${String(t.id).slice(-4)}`,
     route,
-    vehicle_id: t.vehicle ? (typeof t.vehicle === 'object' ? t.vehicle.id : t.vehicle) : t.vehicle_id,
-    driver_id: t.driver ? (typeof t.driver === 'object' ? t.driver.id : t.driver) : t.driver_id,
+    vehicle_id: vehicleRef,
+    driver_id: driverRef,
+    vehicle_registration: vehicleRef,
+    vehicle_name: t.vehicle_name || vehicleRef,
+    driver_name: driverRef,
     cargo: t.notes || t.cargo || 'General Cargo',
     cargo_weight: t.cargo_weight || 0,
     planned_distance: t.planned_distance || 0,

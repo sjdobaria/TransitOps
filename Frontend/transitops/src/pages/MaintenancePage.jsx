@@ -17,13 +17,20 @@ const MaintenancePage = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    const vehicle = vehicles.find((item) => item.id === Number(form.vehicle_id))
+    const vehicle = vehicles.find(
+      (item) =>
+        String(item.id) === String(form.vehicle_id) ||
+        Number(item.id) === Number(form.vehicle_id)
+    )
     if (!vehicle) {
       alert('Select a valid vehicle')
       return
     }
 
-    addMaintenance(form)
+    addMaintenance({
+      ...form,
+      vehicle_id: vehicle.id,
+    })
     setForm(initialForm)
   }
 

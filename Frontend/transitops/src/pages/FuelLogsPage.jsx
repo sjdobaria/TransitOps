@@ -447,8 +447,13 @@ const FuelLogsPage = () => {
                   <option value="">Select vehicle</option>
 
                   {vehicles.map((vehicle) => (
-                    <option key={vehicle.id} value={vehicle.id}>
-                      {vehicle.id}
+                    <option
+                      key={vehicle.id}
+                      value={vehicle.registration_number || vehicle.id}
+                    >
+                      {vehicle.registration_number ||
+                        vehicle.name ||
+                        `VH-${vehicle.id}`}
                     </option>
                   ))}
                 </select>

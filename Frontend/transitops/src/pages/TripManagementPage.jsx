@@ -18,9 +18,8 @@ const TripManagementPage = () => {
     vehicles,
     drivers,
     trips,
-    setTrips,
-    setVehicles,
-    setDrivers,
+    addTrip,
+    updateTripStatus,
   } = useOperations()
 
   const [form, setForm] = useState(initialForm)
@@ -51,11 +50,15 @@ const TripManagementPage = () => {
     event.preventDefault()
 
     const vehicle = vehicles.find(
-      (item) => item.id === Number(form.vehicle_id)
+      (item) =>
+        String(item.id) === String(form.vehicle_id) ||
+        Number(item.id) === Number(form.vehicle_id)
     )
 
     const driver = drivers.find(
-      (item) => item.id === Number(form.driver_id)
+      (item) =>
+        String(item.id) === String(form.driver_id) ||
+        Number(item.id) === Number(form.driver_id)
     )
 
     if (!vehicle || !driver) {
@@ -68,76 +71,20 @@ const TripManagementPage = () => {
       return
     }
 
-    const trip = {
-      id: Date.now(),
+    addTrip({
       trip_id: `TRIP-${1042 + trips.length + 1}`,
+      from: form.from,
+      to: form.to,
       route: `${form.from} → ${form.to}`,
-      vehicle_id: Number(form.vehicle_id),
-      driver_id: Number(form.driver_id),
+      vehicle_id: vehicle.id,
+      driver_id: driver.id,
       cargo: form.cargo,
       cargo_weight: Number(form.cargo_weight),
       planned_distance: Number(form.planned_distance),
       status: 'Draft',
-    }
-
-    setTrips((current) => [...current, trip])
+    })
 
     setForm(initialForm)
-  }
-
-  const updateTripStatus = (tripId, nextStatus) => {
-    const selectedTrip = trips.find(
-      (trip) => trip.id === tripId
-    )
-
-    if (!selectedTrip) return
-
-    setTrips((current) =>
-      current.map((trip) =>
-        trip.id === tripId
-          ? { ...trip, status: nextStatus }
-          : trip
-      )
-    )
-
-    if (nextStatus === 'Dispatched') {
-      setVehicles((current) =>
-        current.map((vehicle) =>
-          vehicle.id === selectedTrip.vehicle_id
-            ? { ...vehicle, status: 'On Trip' }
-            : vehicle
-        )
-      )
-
-      setDrivers((current) =>
-        current.map((driver) =>
-          driver.id === selectedTrip.driver_id
-            ? { ...driver, status: 'On Trip' }
-            : driver
-        )
-      )
-    }
-
-    if (
-      nextStatus === 'Completed' ||
-      nextStatus === 'Cancelled'
-    ) {
-      setVehicles((current) =>
-        current.map((vehicle) =>
-          vehicle.id === selectedTrip.vehicle_id
-            ? { ...vehicle, status: 'Available' }
-            : vehicle
-        )
-      )
-
-      setDrivers((current) =>
-        current.map((driver) =>
-          driver.id === selectedTrip.driver_id
-            ? { ...driver, status: 'Available' }
-            : driver
-        )
-      )
-    }
   }
 
   return (
@@ -331,11 +278,18 @@ const TripManagementPage = () => {
               <tbody>
                 {trips.map((trip) => {
                   const vehicle = vehicles.find(
-                    (item) => item.id === trip.vehicle_id
+                    (item) =>
+                      item.id === trip.vehicle_id ||
+                      item.registration_number === trip.vehicle_id ||
+                      item.name === trip.vehicle_id ||
+                      item.id === Number(trip.vehicle_id)
                   )
 
                   const driver = drivers.find(
-                    (item) => item.id === trip.driver_id
+                    (item) =>
+                      item.id === trip.driver_id ||
+                      item.full_name === trip.driver_id ||
+                      item.id === Number(trip.driver_id)
                   )
 
                   return (
@@ -352,11 +306,11 @@ const TripManagementPage = () => {
                       </td>
 
                       <td className="py-3 pr-4">
-                        {vehicle?.registration_number || '-'}
+                        {vehicle?.registration_number || vehicle?.name || trip.vehicle_registration || trip.vehicle_name || trip.vehicle_id || '-'}
                       </td>
 
                       <td className="py-3 pr-4">
-                        {driver?.full_name || '-'}
+                        {driver?.full_name || trip.driver_name || trip.driver_id || '-'}
                       </td>
 
                       <td className="py-3 pr-4">

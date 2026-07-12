@@ -8,31 +8,53 @@ const ReportsPage = () => {
   const { vehicles, trips, fuelLogs, expenses } = useOperations()
 
   const efficiencyData = useMemo(() => {
-    return fuelLogs.map((entry) => ({
-      name: entry.vehicleId,
-      liters: entry.liters,
-      cost: entry.cost,
+    const map = {}
+    fuelLogs.forEach((entry) => {
+      const name = entry.vehicleId || entry.vehicle_reg || 'Fleet Asset'
+      if (!map[name]) map[name] = { name, liters: 0, cost: 0 }
+      map[name].liters += Number(entry.liters || 0)
+      map[name].cost += Number(entry.cost || 0)
+    })
+    return Object.values(map).map((item) => ({
+      name: item.name,
+      liters: Number(item.liters.toFixed(2)),
+      cost: Number(item.cost.toFixed(2)),
     }))
   }, [fuelLogs])
 
   const utilizationData = useMemo(() => {
     return vehicles.map((vehicle) => ({
-      name: vehicle.id,
-      utilization: Math.min(100, 70 + vehicle.id.length),
+      name: vehicle.registration_number || `VH-${vehicle.id}`,
+      utilization:
+        vehicle.status === 'On Trip'
+          ? 95
+          : vehicle.status === 'In Shop'
+          ? 30
+          : vehicle.status === 'Retired'
+          ? 0
+          : 75,
     }))
   }, [vehicles])
 
   const costData = useMemo(() => {
-    return expenses.map((entry) => ({
-      name: entry.type,
-      amount: entry.amount,
+    const map = {}
+    expenses.forEach((entry) => {
+      const rawCategory = entry.type || entry.expense_type || 'Other'
+      const name =
+        rawCategory.charAt(0).toUpperCase() +
+        rawCategory.slice(1).toLowerCase()
+      map[name] = (map[name] || 0) + Number(entry.amount || 0)
+    })
+    return Object.entries(map).map(([name, amount]) => ({
+      name,
+      amount: Number(amount.toFixed(2)),
     }))
   }, [expenses])
 
   const tripData = useMemo(() => {
     return trips.map((trip) => ({
-      name: trip.id,
-      miles: trip.distance,
+      name: trip.trip_id || trip.route || `TRP-${trip.id}`,
+      miles: Number(trip.planned_distance || trip.distance || 0),
     }))
   }, [trips])
 

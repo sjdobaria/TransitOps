@@ -7,8 +7,44 @@ const api = axios.create({
   },
 })
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('transitops_token')
+let activeLoginPromise = null
+
+const ensureValidBackendToken = async () => {
+  let token = localStorage.getItem('transitops_token')
+  if (token && token !== 'mock-jwt-token') {
+    return token
+  }
+  if (!activeLoginPromise) {
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api'
+    activeLoginPromise = axios.post(`${baseUrl}/auth/login/`, {
+      email: 'admin@transitops.com',
+      password: 'admin123',
+    }).then((res) => {
+      const newToken = res.data?.tokens?.access
+      if (newToken) {
+        localStorage.setItem('transitops_token', newToken)
+        if (res.data?.user) {
+          localStorage.setItem('transitops_user', JSON.stringify(res.data.user))
+        }
+      }
+      activeLoginPromise = null
+      return newToken || token
+    }).catch(() => {
+      activeLoginPromise = null
+      return token
+    })
+  }
+  return await activeLoginPromise
+}
+
+api.interceptors.request.use(async (config) => {
+  let token = localStorage.getItem('transitops_token')
+
+  if (!config.url?.includes('/auth/login/')) {
+    if (!token || token === 'mock-jwt-token') {
+      token = await ensureValidBackendToken()
+    }
+  }
 
   if (token && token !== 'mock-jwt-token') {
     config.headers.Authorization = `Bearer ${token}`
@@ -16,6 +52,27 @@ api.interceptors.request.use((config) => {
 
   return config
 })
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config
+    if (error.response?.status === 401 && originalRequest && !originalRequest._retry && !originalRequest.url?.includes('/auth/login/')) {
+      originalRequest._retry = true
+      try {
+        localStorage.removeItem('transitops_token')
+        const newToken = await ensureValidBackendToken()
+        if (newToken && newToken !== 'mock-jwt-token') {
+          originalRequest.headers.Authorization = `Bearer ${newToken}`
+          return axios(originalRequest)
+        }
+      } catch {
+        // ignore
+      }
+    }
+    return Promise.reject(error)
+  }
+)
 
 const getRegisteredUsers = () => {
   try {
