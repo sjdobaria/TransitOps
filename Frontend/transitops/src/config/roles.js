@@ -71,4 +71,4 @@ export const navigationModules = [
   },
 ]
 
-export const getVisibleModules = (role) => navigationModules.filter((module) => module.roles.includes(role))
+export const getVisibleModules = (role) => navigationModules.filter((module) => module.roles.includes(role || ROLE_NAMES.FLEET_MANAGER))

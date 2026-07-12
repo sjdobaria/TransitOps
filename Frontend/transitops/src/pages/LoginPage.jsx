@@ -91,6 +91,13 @@ const LoginPage = () => {
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
+
+          <p className="mt-4 text-center text-sm text-slate-400">
+            New here?{' '}
+            <Link to="/register" className="font-medium text-emerald-400 transition hover:text-emerald-300">
+              Create an account
+            </Link>
+          </p>
         </div>
       </div>
     </div>

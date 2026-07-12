@@ -13,6 +13,7 @@ import {
   licenseAlerts,
   filterOptions,
 } from '../data/mockDashboard'
+import { getStoredUser } from '../services/api'
 
 const statusStyles = {
   Draft: 'bg-slate-100 text-slate-700',
@@ -22,6 +23,8 @@ const statusStyles = {
 }
 
 const DashboardPage = () => {
+  const user = getStoredUser()
+  const role = user?.role || 'Fleet Manager'
   const [vehicleType, setVehicleType] = useState('All')
   const [status, setStatus] = useState('All')
   const [region, setRegion] = useState('All')
@@ -35,6 +38,28 @@ const DashboardPage = () => {
     })
   }, [vehicleType, status, region])
 
+  const roleFocus = {
+    'Fleet Manager': {
+      title: 'Fleet oversight',
+      description: 'Monitor dispatch health, maintenance risk, and utilization from one operational view.',
+    },
+    Driver: {
+      title: 'Trip readiness',
+      description: 'Stay focused on active routes, assigned vehicles, and dispatch updates.',
+    },
+    'Safety Officer': {
+      title: 'Compliance pulse',
+      description: 'Review dispatch readiness and safety-sensitive alerts before every shift.',
+    },
+    'Financial Analyst': {
+      title: 'Spend oversight',
+      description: 'Track fuel usage, operating expenses, and report-ready trends for leadership.',
+    },
+  }[role] || {
+    title: 'Fleet oversight',
+    description: 'Monitor dispatch health, maintenance risk, and utilization from one operational view.',
+  }
+
   return (
     <DashboardLayout title="Operations Center" subtitle="Fleet performance overview">
       <div className="space-y-6">
@@ -42,6 +67,10 @@ const DashboardPage = () => {
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-emerald-500">Control Tower</p>
             <h2 className="mt-2 text-2xl font-semibold text-slate-900">Monitor fleet health, dispatch readiness, and operational efficiency.</h2>
+            <div className="mt-3 inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700">
+              {role} • {roleFocus.title}
+            </div>
+            <p className="mt-3 text-sm text-slate-500">{roleFocus.description}</p>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
             <label className="text-sm text-slate-600">

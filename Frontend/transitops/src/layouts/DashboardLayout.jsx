@@ -10,7 +10,7 @@ const DashboardLayout = ({ title, subtitle, children }) => {
   const navigate = useNavigate()
   const [mobileOpen, setMobileOpen] = useState(false)
 
-  const visibleModules = useMemo(() => getVisibleModules(user?.role), [user?.role])
+  const visibleModules = useMemo(() => getVisibleModules(user?.role || 'Fleet Manager'), [user?.role])
 
   const handleLogout = () => {
     logoutMockUser()
@@ -20,7 +20,7 @@ const DashboardLayout = ({ title, subtitle, children }) => {
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900">
       <div className="flex min-h-screen flex-col lg:flex-row">
-        <aside className="w-full bg-slate-950 text-slate-200 lg:w-72 lg:min-h-screen">
+        <aside className={`w-full bg-slate-950 text-slate-200 lg:w-72 lg:min-h-screen ${mobileOpen ? 'block' : 'hidden lg:block'}`}>
           <div className="flex items-center justify-between border-b border-slate-800 px-5 py-5">
             <div>
               <p className="text-xs uppercase tracking-[0.35em] text-emerald-400">TransitOps</p>
