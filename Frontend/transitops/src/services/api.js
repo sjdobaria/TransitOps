@@ -10,7 +10,7 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('transitops_token')
 
-  if (token) {
+  if (token && token !== 'mock-jwt-token') {
     config.headers.Authorization = `Bearer ${token}`
   }
 
@@ -29,70 +29,138 @@ const persistRegisteredUsers = (users) => {
   localStorage.setItem('transitops_users', JSON.stringify(users))
 }
 
-const setAuthSession = (user) => {
+const BACKEND_TO_DISPLAY_ROLE = {
+  fleet_manager: 'Fleet Manager',
+  dispatcher: 'Driver',
+  driver: 'Driver',
+  safety_officer: 'Safety Officer',
+  financial_analyst: 'Financial Analyst',
+  admin: 'Fleet Manager',
+}
+
+const DISPLAY_TO_BACKEND_ROLE = {
+  'Fleet Manager': 'fleet_manager',
+  'Driver': 'driver',
+  'Safety Officer': 'safety_officer',
+  'Financial Analyst': 'financial_analyst',
+}
+
+export const setAuthSession = (user, tokens = null) => {
+  const displayRole = BACKEND_TO_DISPLAY_ROLE[user.role] || user.role || 'Fleet Manager'
+  const displayName = user.name || `${user.first_name || ''} ${user.last_name || ''}`.trim() || user.username || user.email || 'TransitOps User'
+
+  const formattedUser = {
+    ...user,
+    name: displayName,
+    role: displayRole,
+    backend_role: user.role,
+  }
+
+  const token = tokens?.access || localStorage.getItem('transitops_token') || 'mock-jwt-token'
+
   const authPayload = {
-    token: 'mock-jwt-token',
-    user,
+    token,
+    tokens,
+    user: formattedUser,
   }
 
   localStorage.setItem('transitops_auth', JSON.stringify(authPayload))
-  localStorage.setItem('transitops_user', JSON.stringify(user))
-  localStorage.setItem('transitops_token', authPayload.token)
+  localStorage.setItem('transitops_user', JSON.stringify(formattedUser))
+  localStorage.setItem('transitops_token', token)
 
   return authPayload
 }
 
 export const loginMockUser = async (email, password) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const registeredUsers = getRegisteredUsers()
-      const matchingUser = registeredUsers.find((user) => user.email === email && user.password === password)
+  try {
+    const response = await api.post('/auth/login/', { email, password })
+    return { data: setAuthSession(response.data.user, response.data.tokens) }
+  } catch (error) {
+    if (error.response?.data?.error || error.response?.data?.detail) {
+      throw new Error(error.response.data.error || error.response.data.detail)
+    }
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const registeredUsers = getRegisteredUsers()
+        const matchingUser = registeredUsers.find((user) => user.email === email && user.password === password)
 
-      if (matchingUser) {
-        resolve({ data: setAuthSession(matchingUser) })
-        return
-      }
-
-      if (email === 'admin@transitops.com' && password === 'admin123') {
-        const user = {
-          name: 'Admin User',
-          email,
-          role: 'Fleet Manager',
-          password,
+        if (matchingUser) {
+          resolve({ data: setAuthSession(matchingUser) })
+          return
         }
 
-        resolve({ data: setAuthSession(user) })
-        return
-      }
+        if (email === 'admin@transitops.com' && password === 'admin123') {
+          const user = {
+            name: 'Admin User',
+            email,
+            role: 'Fleet Manager',
+            password,
+          }
 
-      reject(new Error('Invalid email or password.'))
-    }, 500)
-  })
+          resolve({ data: setAuthSession(user) })
+          return
+        }
+
+        if (error.message === 'Network Error') {
+          reject(new Error('Cannot connect to server. Please ensure backend is running on port 8000.'))
+        } else {
+          reject(new Error('Invalid email or password.'))
+        }
+      }, 300)
+    })
+  }
 }
 
 export const registerMockUser = async ({ name, email, password, role }) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      const registeredUsers = getRegisteredUsers()
-      const existingUser = registeredUsers.find((user) => user.email === email)
+  try {
+    const nameParts = (name || 'New User').trim().split(' ')
+    const first_name = nameParts[0] || 'User'
+    const last_name = nameParts.slice(1).join(' ') || 'Name'
+    const username = email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '') + Math.floor(Math.random() * 1000)
+    const backendRole = DISPLAY_TO_BACKEND_ROLE[role] || 'fleet_manager'
 
-      if (existingUser) {
-        reject(new Error('An account already exists for that email.'))
-        return
+    const payload = {
+      email,
+      username,
+      first_name,
+      last_name,
+      password,
+      password2: password,
+      role: backendRole,
+    }
+    const response = await api.post('/auth/register/', payload)
+    return { data: setAuthSession(response.data.user, response.data.tokens) }
+  } catch (error) {
+    if (error.response?.data) {
+      const errs = error.response.data
+      const firstMsg = typeof errs === 'string' ? errs : Object.values(errs).flat()[0]
+      if (firstMsg) {
+        throw new Error(typeof firstMsg === 'string' ? firstMsg : JSON.stringify(firstMsg))
       }
+    }
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const registeredUsers = getRegisteredUsers()
+        const existingUser = registeredUsers.find((user) => user.email === email)
 
-      const user = {
-        name,
-        email,
-        password,
-        role,
-      }
+        if (existingUser) {
+          reject(new Error('An account already exists for that email.'))
+          return
+        }
 
-      const nextUsers = [...registeredUsers, user]
-      persistRegisteredUsers(nextUsers)
-      resolve({ data: setAuthSession(user) })
-    }, 500)
-  })
+        const user = {
+          name,
+          email,
+          password,
+          role,
+        }
+
+        const nextUsers = [...registeredUsers, user]
+        persistRegisteredUsers(nextUsers)
+        resolve({ data: setAuthSession(user) })
+      }, 300)
+    })
+  }
 }
 
 export const logoutMockUser = () => {

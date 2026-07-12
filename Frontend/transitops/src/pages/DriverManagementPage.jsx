@@ -13,7 +13,7 @@ const initialForm = {
 }
 
 const DriverManagementPage = () => {
-  const { drivers, setDrivers } = useOperations()
+  const { drivers, addDriver, updateDriver, deleteDriver } = useOperations()
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('All')
   const [form, setForm] = useState(initialForm)
@@ -37,9 +37,9 @@ const DriverManagementPage = () => {
     }
 
     if (editingId) {
-      setDrivers((current) => current.map((driver) => (driver.id === editingId ? { ...driver, ...form, safety_score: Number(form.safety_score) } : driver)))
+      updateDriver(editingId, form)
     } else {
-      setDrivers((current) => [...current, { id: Date.now(), ...form, safety_score: Number(form.safety_score) }])
+      addDriver(form)
     }
 
     setForm(initialForm)
@@ -59,7 +59,7 @@ const DriverManagementPage = () => {
   }
 
   const handleDelete = (id) => {
-    setDrivers((current) => current.filter((driver) => driver.id !== id))
+    deleteDriver(id)
   }
 
   return (

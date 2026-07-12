@@ -8,6 +8,7 @@ class User(AbstractUser):
     ROLE_CHOICES = [
         ('fleet_manager', 'Fleet Manager'),
         ('dispatcher', 'Dispatcher'),
+        ('driver', 'Driver'),
         ('safety_officer', 'Safety Officer'),
         ('financial_analyst', 'Financial Analyst'),
         ('admin', 'Admin'),

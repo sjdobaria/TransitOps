@@ -15,6 +15,69 @@ from pathlib import Path
 from datetime import timedelta
 from decouple import config
 
+# Patch Django's AutoFields to work seamlessly with MongoDB for contrib models (admin, auth, contenttypes)
+from django.db.models.fields import AutoField, BigAutoField, SmallAutoField
+from django_mongodb_backend.fields.auto import ObjectIdAutoField
+
+def _patch_mongodb_autofield(cls):
+    orig_init = cls.__init__
+    def new_init(self, *args, **kwargs):
+        if "db_column" not in kwargs or kwargs["db_column"] is None:
+            kwargs["db_column"] = "_id"
+        orig_init(self, *args, **kwargs)
+    cls.__init__ = new_init
+    cls.get_internal_type = lambda self: "ObjectIdAutoField"
+    cls.to_python = ObjectIdAutoField.to_python
+    cls.get_prep_value = ObjectIdAutoField.get_prep_value
+    cls.db_type = ObjectIdAutoField.db_type
+    cls.rel_db_type = ObjectIdAutoField.rel_db_type
+
+_patch_mongodb_autofield(AutoField)
+_patch_mongodb_autofield(BigAutoField)
+_patch_mongodb_autofield(SmallAutoField)
+
+# Patch Django REST Framework to handle MongoDB ObjectId across all serializers and JSON rendering
+try:
+    from rest_framework import fields, serializers, relations
+    from rest_framework.utils.encoders import JSONEncoder as DRFJSONEncoder
+    from bson import ObjectId
+
+    class ObjectIdField(fields.CharField):
+        def to_representation(self, value):
+            if value is None:
+                return None
+            return str(value)
+
+        def to_internal_value(self, data):
+            if data is None or data == '':
+                return None
+            try:
+                return ObjectId(str(data))
+            except Exception:
+                return str(data)
+
+    serializers.ModelSerializer.serializer_field_mapping[ObjectIdAutoField] = ObjectIdField
+    serializers.ModelSerializer.serializer_field_mapping[AutoField] = ObjectIdField
+    serializers.ModelSerializer.serializer_field_mapping[BigAutoField] = ObjectIdField
+    serializers.ModelSerializer.serializer_field_mapping[SmallAutoField] = ObjectIdField
+
+    orig_pk_to_rep = relations.PrimaryKeyRelatedField.to_representation
+    def _pk_to_rep(self, value):
+        try:
+            return str(value.pk)
+        except AttributeError:
+            return str(value)
+    relations.PrimaryKeyRelatedField.to_representation = _pk_to_rep
+
+    orig_default = DRFJSONEncoder.default
+    def _drf_json_default(self, obj):
+        if isinstance(obj, ObjectId):
+            return str(obj)
+        return orig_default(self, obj)
+    DRFJSONEncoder.default = _drf_json_default
+except ImportError:
+    pass
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -96,6 +159,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django_mongodb_backend',
         'NAME': 'transitops',
+        'HOST': MONGODB_URI,
         'CLIENT': {
             'host': MONGODB_URI,
         },

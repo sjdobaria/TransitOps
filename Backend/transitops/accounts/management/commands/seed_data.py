@@ -46,7 +46,7 @@ class Command(BaseCommand):
         self._seed_fuel_logs()
         self._seed_expenses()
 
-        self.stdout.write(self.style.SUCCESS('\n✅ Database seeded successfully!'))
+        self.stdout.write(self.style.SUCCESS('\n[SUCCESS] Database seeded successfully!'))
 
     def _seed_users(self):
         self.stdout.write('Seeding users...')
@@ -93,9 +93,14 @@ class Command(BaseCommand):
         for user_data in users_data:
             if not User.objects.filter(email=user_data['email']).exists():
                 user = User(**user_data)
-                user.set_password('TransitOps@123')
+                user.set_password('admin123')
                 user.save()
                 self.stdout.write(f'  Created user: {user.email} ({user.role})')
+            else:
+                user = User.objects.get(email=user_data['email'])
+                user.set_password('admin123')
+                user.save()
+                self.stdout.write(f'  Updated password for user: {user.email}')
 
     def _seed_vehicles(self):
         self.stdout.write('Seeding vehicles...')

@@ -12,7 +12,7 @@ const initialForm = {
 }
 
 const MaintenancePage = () => {
-  const { vehicles, maintenance, setMaintenance, setVehicles } = useOperations()
+  const { vehicles, maintenance, addMaintenance, closeMaintenance } = useOperations()
   const [form, setForm] = useState(initialForm)
 
   const handleSubmit = (event) => {
@@ -23,14 +23,8 @@ const MaintenancePage = () => {
       return
     }
 
-    setMaintenance((current) => [...current, { id: Date.now(), ...form, vehicle_id: Number(form.vehicle_id) }])
-    setVehicles((current) => current.map((item) => (item.id === vehicle.id ? { ...item, status: 'In Shop' } : item)))
+    addMaintenance(form)
     setForm(initialForm)
-  }
-
-  const closeMaintenance = (id, vehicleId) => {
-    setMaintenance((current) => current.map((item) => (item.id === id ? { ...item, status: 'Closed' } : item)))
-    setVehicles((current) => current.map((item) => (item.id === vehicleId ? { ...item, status: item.status === 'Retired' ? 'Retired' : 'Available' } : item)))
   }
 
   return (

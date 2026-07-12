@@ -13,13 +13,13 @@ class IsFleetManager(permissions.BasePermission):
 
 
 class IsDispatcher(permissions.BasePermission):
-    """Allows access only to Dispatcher or Admin users."""
+    """Allows access only to Dispatcher, Driver, or Admin users."""
 
     def has_permission(self, request, view):
         return (
             request.user
             and request.user.is_authenticated
-            and request.user.role in ('dispatcher', 'admin')
+            and request.user.role in ('dispatcher', 'driver', 'admin')
         )
 
 
@@ -59,13 +59,13 @@ class IsFleetManagerOrReadOnly(permissions.BasePermission):
 
 
 class IsDispatcherOrFleetManager(permissions.BasePermission):
-    """Allows Dispatcher, Fleet Manager, or Admin users."""
+    """Allows Dispatcher, Driver, Fleet Manager, or Admin users."""
 
     def has_permission(self, request, view):
         return (
             request.user
             and request.user.is_authenticated
-            and request.user.role in ('dispatcher', 'fleet_manager', 'admin')
+            and request.user.role in ('dispatcher', 'driver', 'fleet_manager', 'admin')
         )
 
 

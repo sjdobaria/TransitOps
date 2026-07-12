@@ -14,7 +14,7 @@ const initialForm = {
 }
 
 const VehicleRegistryPage = () => {
-  const { vehicles, setVehicles } = useOperations()
+  const { vehicles, addVehicle, updateVehicle, deleteVehicle } = useOperations()
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('All')
   const [form, setForm] = useState(initialForm)
@@ -38,9 +38,9 @@ const VehicleRegistryPage = () => {
     }
 
     if (editingId) {
-      setVehicles((current) => current.map((vehicle) => (vehicle.id === editingId ? { ...vehicle, ...form, max_capacity: Number(form.max_capacity), mileage: Number(form.mileage), acquisition_cost: Number(form.acquisition_cost) } : vehicle)))
+      updateVehicle(editingId, form)
     } else {
-      setVehicles((current) => [...current, { id: Date.now(), ...form, max_capacity: Number(form.max_capacity), mileage: Number(form.mileage), acquisition_cost: Number(form.acquisition_cost) }])
+      addVehicle(form)
     }
 
     setForm(initialForm)
@@ -61,7 +61,7 @@ const VehicleRegistryPage = () => {
   }
 
   const handleDelete = (id) => {
-    setVehicles((current) => current.filter((vehicle) => vehicle.id !== id))
+    deleteVehicle(id)
   }
 
   return (

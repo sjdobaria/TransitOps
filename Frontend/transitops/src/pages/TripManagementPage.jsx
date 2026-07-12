@@ -15,8 +15,18 @@ const initialForm = {
 }
 
 const TripManagementPage = () => {
-  const { vehicles, drivers, trips, setTrips, setVehicles, setDrivers } = useOperations()
+  const { trips, vehicles, drivers, addTrip, updateTripStatus } = useOperations()
+  const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState('All')
   const [form, setForm] = useState(initialForm)
+
+  const filteredTrips = useMemo(() => {
+    return trips.filter((trip) => {
+      const matchesSearch = `${trip.trip_id} ${trip.route}`.toLowerCase().includes(search.toLowerCase())
+      const matchesStatus = statusFilter === 'All' || trip.status === statusFilter
+      return matchesSearch && matchesStatus
+    })
+  }, [trips, search, statusFilter])
 
   const availableVehicles = useMemo(() => vehicles.filter((vehicle) => vehicle.status === 'Available' && vehicle.status !== 'Retired'), [vehicles])
   const availableDrivers = useMemo(() => drivers.filter((driver) => driver.status === 'Available' && driver.safety_score >= 80 && new Date(driver.license_expiry) > new Date()), [drivers])
@@ -41,38 +51,8 @@ const TripManagementPage = () => {
       return
     }
 
-    const trip = {
-      id: Date.now(),
-      trip_id: form.trip_id,
-      route: form.route,
-      vehicle_id: Number(form.vehicle_id),
-      driver_id: Number(form.driver_id),
-      cargo: form.cargo,
-      cargo_weight: Number(form.cargo_weight),
-      planned_distance: Number(form.planned_distance),
-      status: form.status,
-    }
-
-    setTrips((current) => [...current, trip])
-    setVehicles((current) => current.map((item) => (item.id === vehicle.id ? { ...item, status: 'On Trip' } : item)))
-    setDrivers((current) => current.map((item) => (item.id === driver.id ? { ...item, status: 'On Trip' } : item)))
+    addTrip(form)
     setForm(initialForm)
-  }
-
-  const updateTripStatus = (tripId, nextStatus) => {
-    setTrips((current) => current.map((trip) => {
-      if (trip.id !== tripId) return trip
-      const nextTrip = { ...trip, status: nextStatus }
-      if (nextStatus === 'Dispatched') {
-        setVehicles((vehicleState) => vehicleState.map((vehicle) => (vehicle.id === trip.vehicle_id ? { ...vehicle, status: 'On Trip' } : vehicle)))
-        setDrivers((driverState) => driverState.map((driver) => (driver.id === trip.driver_id ? { ...driver, status: 'On Trip' } : driver)))
-      }
-      if ((nextStatus === 'Completed' || nextStatus === 'Cancelled') && trip.status === 'Dispatched') {
-        setVehicles((vehicleState) => vehicleState.map((vehicle) => (vehicle.id === trip.vehicle_id ? { ...vehicle, status: 'Available' } : vehicle)))
-        setDrivers((driverState) => driverState.map((driver) => (driver.id === trip.driver_id ? { ...driver, status: 'Available' } : driver)))
-      }
-      return nextTrip
-    }))
   }
 
   return (
