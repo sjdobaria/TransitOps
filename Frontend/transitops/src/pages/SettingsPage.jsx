@@ -1,7 +1,12 @@
 import { Moon, Bell, UserCircle, Palette } from 'lucide-react'
 import DashboardLayout from '../layouts/DashboardLayout'
+import { getStoredUser } from '../services/api'
+import { useTheme } from '../contexts/ThemeContext'
 
 const SettingsPage = () => {
+  const user = getStoredUser()
+  const { theme, setTheme } = useTheme()
+
   return (
     <DashboardLayout title="Workspace Settings" subtitle="Manage your preferences">
       <div className="space-y-6">
@@ -12,18 +17,22 @@ const SettingsPage = () => {
             </div>
             <div>
               <h2 className="text-xl font-semibold text-slate-900">Profile</h2>
-              <p className="text-sm text-slate-500">Update your account details and workspace identity.</p>
+              <p className="text-sm text-slate-500">Your signed-in workspace identity is shown below.</p>
             </div>
           </div>
 
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
             <label className="block text-sm text-slate-700">
               <span className="mb-1.5 block font-medium">Full name</span>
-              <input className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none" defaultValue="TransitOps Admin" />
+              <input className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none" value={user?.name || ''} readOnly />
             </label>
             <label className="block text-sm text-slate-700">
               <span className="mb-1.5 block font-medium">Email</span>
-              <input className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none" defaultValue="admin@transitops.com" />
+              <input className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none" value={user?.email || ''} readOnly />
+            </label>
+            <label className="block text-sm text-slate-700">
+              <span className="mb-1.5 block font-medium">Role</span>
+              <input className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none" value={user?.role || 'Fleet Manager'} readOnly />
             </label>
           </div>
         </div>
@@ -60,26 +69,19 @@ const SettingsPage = () => {
             </div>
           </div>
 
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
+          <div className="mt-6 max-w-md">
             <label className="block text-sm text-slate-700">
               <span className="mb-1.5 block font-medium">Theme</span>
-              <select className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none">
-                <option>Light</option>
-                <option selected>Dark</option>
-              </select>
-            </label>
-            <label className="block text-sm text-slate-700">
-              <span className="mb-1.5 block font-medium">Density</span>
-              <select className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none">
-                <option>Comfortable</option>
-                <option>Compact</option>
+              <select value={theme} onChange={(event) => setTheme(event.target.value)} className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none">
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
               </select>
             </label>
           </div>
 
           <div className="mt-6 flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
             <Moon size={16} />
-            <span>Dark mode is currently enabled for the workspace experience.</span>
+            <span>{theme === 'dark' ? 'Dark mode is currently enabled for the workspace experience.' : 'Light mode is currently enabled for the workspace experience.'}</span>
           </div>
         </div>
       </div>

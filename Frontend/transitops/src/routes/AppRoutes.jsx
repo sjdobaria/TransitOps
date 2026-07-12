@@ -3,7 +3,6 @@ import LandingPage from '../pages/LandingPage'
 import LoginPage from '../pages/LoginPage'
 import RegisterPage from '../pages/RegisterPage'
 import DashboardPage from '../pages/DashboardPage'
-import ComingSoonPage from '../pages/ComingSoonPage'
 import ProtectedRoute from '../components/ProtectedRoute'
 import VehicleRegistryPage from '../pages/VehicleRegistryPage'
 import DriverManagementPage from '../pages/DriverManagementPage'
@@ -92,14 +91,6 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <SettingsPage />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/dashboard/:module"
-        element={
-          <ProtectedRoute>
-            <ComingSoonPage />
           </ProtectedRoute>
         }
       />

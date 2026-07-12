@@ -52,7 +52,7 @@ export const navigationModules = [
     id: 'expenses',
     label: 'Expenses',
     path: '/dashboard/expenses',
-    icon: 'Banknote',
+    icon: 'ReceiptText',
     roles: [ROLE_NAMES.FINANCIAL_ANALYST],
   },
   {
